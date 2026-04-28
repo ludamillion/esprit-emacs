@@ -1,5 +1,5 @@
 #!/bin/bash
 emacs --quick --batch --load=ert \
-      --load=test/mood-line-test.el \
-      --load=test/mood-line-segment-vc-test.el \
+      --load=test/esprit-line-test.el \
+      --load=test/esprit-line-segment-vc-test.el \
       --funcall=ert-run-tests-batch-and-exit

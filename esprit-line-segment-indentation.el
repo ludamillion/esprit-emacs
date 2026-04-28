@@ -1,8 +1,8 @@
-;;; mood-line-segment-indentation.el --- An indentation info segment for mood-line -*- lexical-binding: t; -*-
+;;; esprit-line-segment-indentation.el --- An indentation info segment for esprit-line -*- lexical-binding: t; -*-
 ;;
 ;; Author: Alynx Zhou <alynx.zhou@gmail.com>
 ;;         Jessie Hildebrandt <jessieh.net>
-;; Homepage: https://gitlab.com/jessieh/mood-line
+;; Homepage: https://gitlab.com/ludamillion/esprit-line
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -40,7 +40,7 @@
 ;; ---------------------------------- ;;
 
 (eval-when-compile
-  (declare-function mood-line--get-glyph "mood-line"))
+  (declare-function esprit-line--get-glyph "esprit-line"))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -52,32 +52,32 @@
 ;; Group definitions
 ;; ---------------------------------- ;;
 
-(defgroup mood-line-segment-indentation nil
-  "An indentation info segment for mood-line."
-  :group 'mood-line)
+(defgroup esprit-line-segment-indentation nil
+  "An indentation info segment for esprit-line."
+  :group 'esprit-line)
 
 ;; ---------------------------------- ;;
 ;; Variable definitions
 ;; ---------------------------------- ;;
 
-(defcustom mood-line-segment-indentation-always-show-offset nil
+(defcustom esprit-line-segment-indentation-always-show-offset nil
   "When non-nil, always show the indentation offset of the current mode.
 
 Default behavior of the indentation segment is to display the indentation offset
  of the current mode when `indent-tabs-mode' is non-nil and an offset value can
  be found for the current mode.  Otherwise, `tab-wdith' will be shown.
 
-When `mood-line-segment-indentation-always-show-offset' is set to non-nil, the
+When `esprit-line-segment-indentation-always-show-offset' is set to non-nil, the
  indentation offset will always be shown alongside `tab-width'.  If an offset
  value cannot be found for the current mode, a \"?\" character will be displayed
  alongside `tab-width'."
-  :group 'mood-line-segment-indentation
+  :group 'esprit-line-segment-indentation
   :type 'boolean)
 
 ;; Assembled from `editorconfig-indentation-alist' and `doom-modeline-indent-alist':
 ;; https://github.com/editorconfig/editorconfig-emacs/blob/b8043702f3d977db0e030c6c64ee4a810cad5f45/editorconfig.el#L175
 ;; https://github.com/seagle0128/doom-modeline/blob/fe9ee5a2a950f9ded10261a05a12adc577ae9e36/doom-modeline-core.el#L284
-(defcustom mood-line-segment-indentation-mode-offset-alist
+(defcustom esprit-line-segment-indentation-mode-offset-alist
   '((apache-mode apache-indent-level)
     (awk-mode c-basic-offset)
     (bpftrace-mode c-basic-offset)
@@ -184,7 +184,7 @@ When `mood-line-segment-indentation-always-show-offset' is set to non-nil, the
 When multiple variables are specified for a given mode, the offset value will
  be retrieved from the first variable that resolves to a value, evaluated in the
  order provided."
-  :group 'mood-line-segment-indentation
+  :group 'esprit-line-segment-indentation
   :type '(alist :key-type symbol :value-type sexp))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -197,22 +197,22 @@ When multiple variables are specified for a given mode, the offset value will
 ;; Segment function
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-indentation ()
+(defun esprit-line-segment-indentation ()
   "Return the indentation style of the current buffer."
   (let* ((mode-offset (symbol-value
                        (seq-some #'identity
                                  (cdr (assoc major-mode
-                                             mood-line-segment-indentation-mode-offset-alist))))))
+                                             esprit-line-segment-indentation-mode-offset-alist))))))
     (propertize (concat (if indent-tabs-mode "TAB" "SPC")
-                        (mood-line--get-glyph :count-separator)
-                        (if mood-line-segment-indentation-always-show-offset
+                        (esprit-line--get-glyph :count-separator)
+                        (if esprit-line-segment-indentation-always-show-offset
                             (format "%s:%d"
                                     (or mode-offset "?")
                                     tab-width)
                           (number-to-string (if indent-tabs-mode
                                                 tab-width
                                               (or mode-offset tab-width)))))
-                'face 'mood-line-encoding)))
+                'face 'esprit-line-encoding)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -220,6 +220,6 @@ When multiple variables are specified for a given mode, the offset value will
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(provide 'mood-line-segment-indentation)
+(provide 'esprit-line-segment-indentation)
 
-;;; mood-line-segment-indentation.el ends here
+;;; esprit-line-segment-indentation.el ends here

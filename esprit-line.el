@@ -1,7 +1,7 @@
-;;; mood-line.el --- A minimal mode line inspired by doom-modeline -*- lexical-binding: t; -*-
+;;; esprit-line.el --- A minimal mode line inspired by doom-modeline -*- lexical-binding: t; -*-
 ;;
 ;; Author: Jessie Hildebrandt <jessieh.net>
-;; Homepage: https://gitlab.com/jessieh/mood-line
+;; Homepage: https://gitlab.com/ludamillion/esprit-line
 ;; Keywords: mode-line faces
 ;; Version: 3.1.0
 ;; Package-Requires: ((emacs "26.1"))
@@ -10,7 +10,7 @@
 
 ;;; Commentary:
 ;;
-;; mood-line is a lightweight, drop-in replacement for the default mode line.
+;; esprit-line is a lightweight, drop-in replacement for the default mode line.
 ;;
 ;; Features offered:
 ;; * Clean, informative design
@@ -19,11 +19,11 @@
 ;; * Lazy-loaded extensions
 ;; * Lightweight, no dependencies
 ;;
-;; To activate mood-line:
-;; (mood-line-mode)
+;; To activate esprit-line:
+;; (esprit-line-mode)
 ;;
-;; For information on customizing mood-line:
-;; M-x customize-group mood-line
+;; For information on customizing esprit-line:
+;; M-x customize-group esprit-line
 
 ;;; License:
 ;;
@@ -81,7 +81,7 @@
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defmacro mood-line--deflazy (name)
+(defmacro esprit-line--deflazy (name)
   "Define dummy function NAME to `require' its module and call actual function."
   (let ((module (intern (car (split-string (symbol-name name) "--")))))
     `(defun ,name (&rest args)
@@ -90,8 +90,8 @@
        (require (quote ,module))
        (apply (function ,name) args))))
 
-(defmacro mood-line-defformat (&rest spec)
-  "Format :left and :right segment lists of plist SPEC for `mood-line-format'.
+(defmacro esprit-line-defformat (&rest spec)
+  "Format :left and :right segment lists of plist SPEC for `esprit-line-format'.
 
 A segment may be a string, a cons cell of the form (FUNCTION . SEPARATOR),
  or any expression that evaluates to a string or nil.
@@ -126,7 +126,7 @@ An optional key :padding may be provided, the value of which will be used as
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defconst mood-line-glyphs-ascii
+(defconst esprit-line-glyphs-ascii
   '((:checker-info . ?i)
     (:checker-issues . ?+)
     (:checker-good . ?-)
@@ -147,9 +147,9 @@ An optional key :padding may be provided, the value of which will be used as
     (:frame-client . ?@)
 
     (:count-separator . ?*))
-  "Set of ASCII glyphs for use with mood-line.")
+  "Set of ASCII glyphs for use with esprit-line.")
 
-(defconst mood-line-glyphs-fira-code
+(defconst esprit-line-glyphs-fira-code
   '((:checker-info . ?↳)
     (:checker-issues . ?→)
     (:checker-good . ?✓)
@@ -170,9 +170,9 @@ An optional key :padding may be provided, the value of which will be used as
     (:frame-client . ?)
 
     (:count-separator . ?×))
-  "Set of Fira Code-compatible glyphs for use with mood-line.")
+  "Set of Fira Code-compatible glyphs for use with esprit-line.")
 
-(defconst mood-line-glyphs-unicode
+(defconst esprit-line-glyphs-unicode
   '((:checker-info . ?🛈)
     (:checker-issues . ?⚑)
     (:checker-good . ?✔)
@@ -193,52 +193,52 @@ An optional key :padding may be provided, the value of which will be used as
     (:frame-client . ?⇅)
 
     (:count-separator . ?✕))
-  "Set of Unicode glyphs for use with mood-line.")
+  "Set of Unicode glyphs for use with esprit-line.")
 
-(defconst mood-line-format-default
-  (mood-line-defformat
+(defconst esprit-line-format-default
+  (esprit-line-defformat
    :left
-   (((mood-line-segment-modal)                  . " ")
-    ((or (mood-line-segment-buffer-status) " ") . " ")
-    ((mood-line-segment-buffer-name)            . "  ")
-    ((mood-line-segment-anzu)                   . "  ")
-    ((mood-line-segment-multiple-cursors)       . "  ")
-    ((mood-line-segment-cursor-position)        . " ")
-    (mood-line-segment-scroll))
+   (((esprit-line-segment-modal)                  . " ")
+    ((or (esprit-line-segment-buffer-status) " ") . " ")
+    ((esprit-line-segment-buffer-name)            . "  ")
+    ((esprit-line-segment-anzu)                   . "  ")
+    ((esprit-line-segment-multiple-cursors)       . "  ")
+    ((esprit-line-segment-cursor-position)        . " ")
+    (esprit-line-segment-scroll))
    :right
-   (((mood-line-segment-vc)         . "  ")
-    ((mood-line-segment-major-mode) . "  ")
-    ((mood-line-segment-misc-info)  . "  ")
-    ((mood-line-segment-checker)    . "  ")
-    ((mood-line-segment-process)    . "  ")))
-  "Default format for mood-line.")
+   (((esprit-line-segment-vc)         . "  ")
+    ((esprit-line-segment-major-mode) . "  ")
+    ((esprit-line-segment-misc-info)  . "  ")
+    ((esprit-line-segment-checker)    . "  ")
+    ((esprit-line-segment-process)    . "  ")))
+  "Default format for esprit-line.")
 
-(defconst mood-line-format-default-extended
-  (mood-line-defformat
+(defconst esprit-line-format-default-extended
+  (esprit-line-defformat
    :left
-   (((mood-line-segment-modal)            . " ")
-    ((or (mood-line-segment-buffer-status)
-         (mood-line-segment-client)
+   (((esprit-line-segment-modal)            . " ")
+    ((or (esprit-line-segment-buffer-status)
+         (esprit-line-segment-client)
          " ")                             . " ")
-    ((mood-line-segment-project)          . "/")
-    ((mood-line-segment-buffer-name)      . "  ")
-    ((mood-line-segment-anzu)             . "  ")
-    ((mood-line-segment-multiple-cursors) . "  ")
-    (mood-line-segment-cursor-position)
-    #(":" 0 1 (face mood-line-unimportant))
-    ((mood-line-segment-cursor-point)     . " ")
-    ((mood-line-segment-region)           . " ")
-    (mood-line-segment-scroll))
+    ((esprit-line-segment-project)          . "/")
+    ((esprit-line-segment-buffer-name)      . "  ")
+    ((esprit-line-segment-anzu)             . "  ")
+    ((esprit-line-segment-multiple-cursors) . "  ")
+    (esprit-line-segment-cursor-position)
+    #(":" 0 1 (face esprit-line-unimportant))
+    ((esprit-line-segment-cursor-point)     . " ")
+    ((esprit-line-segment-region)           . " ")
+    (esprit-line-segment-scroll))
    :right
-   (((mood-line-segment-indentation) . "  ")
-    ((mood-line-segment-eol)         . "  ")
-    ((mood-line-segment-encoding)    . "  ")
-    ((mood-line-segment-vc)          . "  ")
-    ((mood-line-segment-major-mode)  . "  ")
-    ((mood-line-segment-misc-info)   . "  ")
-    ((mood-line-segment-checker)     . "  ")
-    ((mood-line-segment-process)     . "  ")))
-  "Extended default format for mood-line showcasing all included segments.")
+   (((esprit-line-segment-indentation) . "  ")
+    ((esprit-line-segment-eol)         . "  ")
+    ((esprit-line-segment-encoding)    . "  ")
+    ((esprit-line-segment-vc)          . "  ")
+    ((esprit-line-segment-major-mode)  . "  ")
+    ((esprit-line-segment-misc-info)   . "  ")
+    ((esprit-line-segment-checker)     . "  ")
+    ((esprit-line-segment-process)     . "  ")))
+  "Extended default format for esprit-line showcasing all included segments.")
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -250,27 +250,27 @@ An optional key :padding may be provided, the value of which will be used as
 ;; Group definitions
 ;; ---------------------------------- ;;
 
-(defgroup mood-line nil
+(defgroup esprit-line nil
   "A minimal mode line configuration."
   :group 'mode-line)
 
-(defgroup mood-line-faces nil
-  "Faces used by mood-line."
-  :group 'mood-line
+(defgroup esprit-line-faces nil
+  "Faces used by esprit-line."
+  :group 'esprit-line
   :group 'faces)
 
 ;; ---------------------------------- ;;
 ;; Variable definitions
 ;; ---------------------------------- ;;
 
-(defcustom mood-line-glyph-alist mood-line-glyphs-ascii
+(defcustom esprit-line-glyph-alist esprit-line-glyphs-ascii
   "Alist mapping glyph names to characters used to draw some mode line segments.
 
-mood-line includes several sets of glyphs by default:
+esprit-line includes several sets of glyphs by default:
 
- `mood-line-glyphs-ascii'     | Basic ASCII character glyphs
- `mood-line-glyphs-fira-code' | Fira Code-compatible glyphs
- `mood-line-glyphs-unicode'   | Fancy unicode glyphs
+ `esprit-line-glyphs-ascii'     | Basic ASCII character glyphs
+ `esprit-line-glyphs-fira-code' | Fira Code-compatible glyphs
+ `esprit-line-glyphs-unicode'   | Fancy unicode glyphs
 
 Note that if a character provided by a glyph set is not included in your default
  font, the editor will render it with a fallback font.  If your fallback font is
@@ -278,7 +278,7 @@ Note that if a character provided by a glyph set is not included in your default
  or shrink.
 
 Keys are names for different mode line glyphs, values are characters for that
- glyph.  Glyphs used by mood-line include:
+ glyph.  Glyphs used by esprit-line include:
 
  :checker-info        | Syntax checker reports notes
  :checker-issues      | Syntax checker reports issues
@@ -301,14 +301,14 @@ Keys are names for different mode line glyphs, values are characters for that
 
  :count-separator     | Separates some indicator names from numerical counts
 
-`mood-line-glyphs-ascii' will be used as a fallback whenever a glyph is found
- to be missing in `mood-line-glyph-alist'."
-  :group 'mood-line
+`esprit-line-glyphs-ascii' will be used as a fallback whenever a glyph is found
+ to be missing in `esprit-line-glyph-alist'."
+  :group 'esprit-line
   :type '(alist :tag "Character map alist"
                 :key-type (symbol :tag "Glyph name")
                 :value-type (character :tag "Character to use")))
 
-(defcustom mood-line-format mood-line-format-default
+(defcustom esprit-line-format esprit-line-format-default
   "List providing left and right lists of segments to format as the mode line.
 
 The list should be of the form (L-SEGMENTS R-SEGMENTS), where L-SEGMENTS is a
@@ -323,10 +323,10 @@ When a segment evaluates to nil, the following segment will be skipped and not
  processed or displayed. This behavior may be used to, e.g., conditionally
  display separating whitespace after a segment.
 
-Examples: `mood-line-format-default' and `mood-line-format-default-extended'
+Examples: `esprit-line-format-default' and `esprit-line-format-default-extended'
 
-See `mood-line-defformat' for a helpful formatting macro."
-  :group 'mood-line
+See `esprit-line-defformat' for a helpful formatting macro."
+  :group 'esprit-line
   :type '(list :tag "Mode line segments"
                (repeat :tag "Left side" sexp)
                (repeat :tag "Right side" sexp)))
@@ -335,69 +335,69 @@ See `mood-line-defformat' for a helpful formatting macro."
 ;; Face definitions
 ;; ---------------------------------- ;;
 
-(defface mood-line-buffer-name
+(defface esprit-line-buffer-name
   '((t (:inherit mode-line-buffer-id)))
   "Face used for displaying the value of `buffer-name'."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-buffer-status-modified
+(defface esprit-line-buffer-status-modified
   '((t (:inherit error :weight normal)))
   "Face used for the ':buffer-modified' buffer status indicator."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-buffer-status-read-only
+(defface esprit-line-buffer-status-read-only
   '((t (:inherit shadow :weight normal)))
   "Face used for the ':buffer-read-only' buffer status indicator."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-buffer-status-narrowed
+(defface esprit-line-buffer-status-narrowed
   '((t (:inherit font-lock-doc-face :weight normal)))
   "Face used for the ':buffer-narrowed' buffer status indicator."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-frame-status-client
-  '((t (:inherit mood-line-unimportant)))
+(defface esprit-line-frame-status-client
+  '((t (:inherit esprit-line-unimportant)))
   "Face used for the :frame-client frame status indicator.")
 
-(defface mood-line-major-mode
+(defface esprit-line-major-mode
   '((t (:inherit bold)))
   "Face used for the major mode indicator."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-status-neutral
-  '((t (:inherit mood-line-unimportant)))
+(defface esprit-line-status-neutral
+  '((t (:inherit esprit-line-unimportant)))
   "Face used for neutral or inactive status indicators."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-status-info
+(defface esprit-line-status-info
   '((t (:inherit font-lock-keyword-face :weight normal)))
   "Face used for generic status indicators."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-status-success
+(defface esprit-line-status-success
   '((t (:inherit success :weight normal)))
   "Face used for success status indicators."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-status-warning
+(defface esprit-line-status-warning
   '((t (:inherit warning :weight normal)))
   "Face for warning status indicators."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-status-error
+(defface esprit-line-status-error
   '((t (:inherit error :weight normal)))
   "Face for error status indicators."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-encoding
-  '((t (:inherit mood-line-unimportant)))
+(defface esprit-line-encoding
+  '((t (:inherit esprit-line-unimportant)))
   "Face used for buffer/file encoding information."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
-(defface mood-line-unimportant
+(defface esprit-line-unimportant
   '((t (:inherit shadow :weight normal)))
   "Face used for less important mode line elements."
-  :group 'mood-line-faces)
+  :group 'esprit-line-faces)
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -405,12 +405,12 @@ See `mood-line-defformat' for a helpful formatting macro."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defvar mood-line--escape-buffer (get-buffer-create " *mood-line*")
-  "Buffer used by `mood-line--escape'.")
+(defvar esprit-line--escape-buffer (get-buffer-create " *esprit-line*")
+  "Buffer used by `esprit-line--escape'.")
 
-(defun mood-line--escape (&rest strings)
+(defun esprit-line--escape (&rest strings)
   "Escape all mode line constructs in STRINGS."
-  (with-current-buffer mood-line--escape-buffer
+  (with-current-buffer esprit-line--escape-buffer
     (erase-buffer)
     (apply #'insert strings)
     (while (search-backward "%" nil t)
@@ -419,30 +419,30 @@ See `mood-line-defformat' for a helpful formatting macro."
       (goto-char (- (point) 1)))
     (buffer-string)))
 
-(defun mood-line--get-glyph (glyph)
-  "Return character from `mood-line-glyph-alist' for GLYPH.
+(defun esprit-line--get-glyph (glyph)
+  "Return character from `esprit-line-glyph-alist' for GLYPH.
 If a character could not be found for the requested glyph, a fallback will be
-returned from `mood-line-glyphs-ascii'."
-  (char-to-string (or (alist-get glyph mood-line-glyph-alist)
-                      (alist-get glyph mood-line-glyphs-ascii))))
+returned from `esprit-line-glyphs-ascii'."
+  (char-to-string (or (alist-get glyph esprit-line-glyph-alist)
+                      (alist-get glyph esprit-line-glyphs-ascii))))
 
-(defun mood-line--process-segments (segments)
+(defun esprit-line--process-segments (segments)
   "Process list of segments SEGMENTS, returning a string.
 Segments are processed according to the rules described in the documentation
-for `mood-line-format', which see."
+for `esprit-line-format', which see."
   (cl-loop with last = t
            for seg in segments
            if last do (setq last (eval seg)) and concat last
            else do (setq last t)))
 
-(defun mood-line--process-format (format)
+(defun esprit-line--process-format (format)
   "Format and return a mode line string according to FORMAT.
 Returned string is padded in the center to fit the width of the window.
 Left and right segment lists of FORMAT will be processed according to the rules
-described in the documentation for `mood-line-format', which see."
-  (let ((right-str (mood-line--process-segments (cadr format))))
-    (mood-line--escape
-     (mood-line--process-segments (car format))
+described in the documentation for `esprit-line-format', which see."
+  (let ((right-str (esprit-line--process-segments (cadr format))))
+    (esprit-line--escape
+     (esprit-line--process-segments (car format))
      " "
      (propertize " "
                  'display `((space :align-to (- right (- 0 right-margin)
@@ -459,61 +459,61 @@ described in the documentation for `mood-line-format', which see."
 ;; Modal editing
 ;; ---------------------------------- ;;
 
-(mood-line--deflazy mood-line-segment-modal--evil-fn)
-(mood-line--deflazy mood-line-segment-modal--meow-fn)
-(mood-line--deflazy mood-line-segment-modal--xah-fn)
-(mood-line--deflazy mood-line-segment-modal--god-fn)
+(esprit-line--deflazy esprit-line-segment-modal--evil-fn)
+(esprit-line--deflazy esprit-line-segment-modal--meow-fn)
+(esprit-line--deflazy esprit-line-segment-modal--xah-fn)
+(esprit-line--deflazy esprit-line-segment-modal--god-fn)
 
-(defun mood-line-segment-modal ()
+(defun esprit-line-segment-modal ()
   "Return the correct mode line segment for the first active modal mode found.
 Modal editing modes checked, in order:
 `evil-mode', `meow-mode', `xah-fly-keys', `god-mode'"
   (cond
    ((bound-and-true-p evil-mode)
-    (mood-line-segment-modal--evil-fn))
+    (esprit-line-segment-modal--evil-fn))
    ((bound-and-true-p meow-mode)
-    (mood-line-segment-modal--meow-fn))
+    (esprit-line-segment-modal--meow-fn))
    ((bound-and-true-p xah-fly-keys)
-    (mood-line-segment-modal--xah-fn))
+    (esprit-line-segment-modal--xah-fn))
    ((or (bound-and-true-p god-local-mode)
         (bound-and-true-p god-global-mode))
-    (mood-line-segment-modal--god-fn))))
+    (esprit-line-segment-modal--god-fn))))
 
 ;; ---------------------------------- ;;
 ;; Indentation style
 ;; ---------------------------------- ;;
 
-(mood-line--deflazy mood-line-segment-indentation)
+(esprit-line--deflazy esprit-line-segment-indentation)
 
 ;; ---------------------------------- ;;
 ;; Version control
 ;; ---------------------------------- ;;
 
-(mood-line--deflazy mood-line-segment-vc--update)
+(esprit-line--deflazy esprit-line-segment-vc--update)
 
-(defvar-local mood-line-segment-vc--text nil)
+(defvar-local esprit-line-segment-vc--text nil)
 
-(defun mood-line-segment-vc ()
+(defun esprit-line-segment-vc ()
   "Return color-coded version control information."
-  mood-line-segment-vc--text)
+  esprit-line-segment-vc--text)
 
 ;; ---------------------------------- ;;
 ;; Checker status
 ;; ---------------------------------- ;;
 
-(mood-line--deflazy mood-line-segment-checker--flycheck-update)
-(mood-line--deflazy mood-line-segment-checker--flymake-update)
+(esprit-line--deflazy esprit-line-segment-checker--flycheck-update)
+(esprit-line--deflazy esprit-line-segment-checker--flymake-update)
 
-(defvar-local mood-line-segment-checker--flycheck-text nil)
-(defvar-local mood-line-segment-checker--flymake-text nil)
+(defvar-local esprit-line-segment-checker--flycheck-text nil)
+(defvar-local esprit-line-segment-checker--flymake-text nil)
 
-(defun mood-line-segment-checker ()
+(defun esprit-line-segment-checker ()
   "Return status information for flycheck or flymake, if active."
   (cond
    ((bound-and-true-p flycheck-mode)
-    mood-line-segment-checker--flycheck-text)
+    esprit-line-segment-checker--flycheck-text)
    ((bound-and-true-p flymake-mode)
-    mood-line-segment-checker--flymake-text)))
+    esprit-line-segment-checker--flymake-text)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -521,11 +521,11 @@ Modal editing modes checked, in order:
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-client ()
+(defun esprit-line-segment-client ()
   "Return an indicator representing the client status of the current frame."
   (when (frame-parameter nil 'client)
-    (propertize (mood-line--get-glyph :frame-client)
-                'face 'mood-line-frame-status-client)))
+    (propertize (esprit-line--get-glyph :frame-client)
+                'face 'esprit-line-frame-status-client)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -533,7 +533,7 @@ Modal editing modes checked, in order:
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-project ()
+(defun esprit-line-segment-project ()
   "Return project name from project.el or Projectile, if any."
   (or
    (and (fboundp 'project-name)
@@ -548,23 +548,23 @@ Modal editing modes checked, in order:
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-anzu ()
+(defun esprit-line-segment-anzu ()
   "Return color-coded anzu status information."
   (when (bound-and-true-p anzu--state)
     (cond
      ((eq anzu--state 'replace-query)
       (format #("Replace%s%d"
-                7 10 (face mood-line-status-info))
-              (mood-line--get-glyph :count-separator)
+                7 10 (face esprit-line-status-info))
+              (esprit-line--get-glyph :count-separator)
               anzu--cached-count))
      (anzu--overflow-p
       (format #("%d/%d+"
-                0 2 (face mood-line-status-info)
-                3 6 (face mood-line-status-error))
+                0 2 (face esprit-line-status-info)
+                3 6 (face esprit-line-status-error))
               anzu--current-position anzu--total-matched))
      (t
       (format #("%d/%d"
-                0 2 (face mood-line-status-info))
+                0 2 (face esprit-line-status-info))
               anzu--current-position anzu--total-matched)))))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -573,12 +573,12 @@ Modal editing modes checked, in order:
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-multiple-cursors ()
+(defun esprit-line-segment-multiple-cursors ()
   "Return the number of active multiple-cursors."
   (when (bound-and-true-p multiple-cursors-mode)
     (format #("MC%s%d"
-              2 5 (face mood-line-status-info))
-            (mood-line--get-glyph :count-separator)
+              2 5 (face esprit-line-status-info))
+            (esprit-line--get-glyph :count-separator)
             (mc/num-cursors))))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -591,44 +591,44 @@ Modal editing modes checked, in order:
 ;; Buffer status segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-buffer-status ()
+(defun esprit-line-segment-buffer-status ()
   "Return an indicator representing the status of the current buffer."
   (if (buffer-file-name (buffer-base-buffer))
       (cond
        ((and (buffer-narrowed-p)
              (buffer-modified-p))
-        (propertize (mood-line--get-glyph :buffer-narrowed)
-                    'face 'mood-line-buffer-status-modified))
+        (propertize (esprit-line--get-glyph :buffer-narrowed)
+                    'face 'esprit-line-buffer-status-modified))
        ((and (buffer-narrowed-p)
              buffer-read-only)
-        (propertize (mood-line--get-glyph :buffer-narrowed)
-                    'face 'mood-line-buffer-status-read-only))
+        (propertize (esprit-line--get-glyph :buffer-narrowed)
+                    'face 'esprit-line-buffer-status-read-only))
        ((buffer-narrowed-p)
-        (propertize (mood-line--get-glyph :buffer-narrowed)
-                    'face 'mood-line-buffer-status-narrowed))
+        (propertize (esprit-line--get-glyph :buffer-narrowed)
+                    'face 'esprit-line-buffer-status-narrowed))
        ((buffer-modified-p)
-        (propertize (mood-line--get-glyph :buffer-modified)
-                    'face 'mood-line-buffer-status-modified))
+        (propertize (esprit-line--get-glyph :buffer-modified)
+                    'face 'esprit-line-buffer-status-modified))
        (buffer-read-only
-        (propertize (mood-line--get-glyph :buffer-read-only)
-                    'face 'mood-line-buffer-status-read-only)))
+        (propertize (esprit-line--get-glyph :buffer-read-only)
+                    'face 'esprit-line-buffer-status-read-only)))
     (when (buffer-narrowed-p)
-      (propertize (mood-line--get-glyph :buffer-narrowed)
-                  'face 'mood-line-buffer-status-narrowed))))
+      (propertize (esprit-line--get-glyph :buffer-narrowed)
+                  'face 'esprit-line-buffer-status-narrowed))))
 
 ;; ---------------------------------- ;;
 ;; Buffer name segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-buffer-name ()
+(defun esprit-line-segment-buffer-name ()
   "Return the name of the current buffer."
-  (format-mode-line "%b" 'mood-line-buffer-name))
+  (format-mode-line "%b" 'esprit-line-buffer-name))
 
 ;; ---------------------------------- ;;
 ;; Cursor position segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-cursor-position ()
+(defun esprit-line-segment-cursor-position ()
   "Return the position of the cursor in the current buffer."
   (format-mode-line "%l:%c"))
 
@@ -636,21 +636,21 @@ Modal editing modes checked, in order:
 ;; Cursor point segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-cursor-point ()
+(defun esprit-line-segment-cursor-point ()
   "Return the value of `point' in the current buffer."
   (format #("%d"
-            0 2 (face mood-line-unimportant))
+            0 2 (face esprit-line-unimportant))
           (point)))
 
 ;; ---------------------------------- ;;
 ;; Region segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-region ()
+(defun esprit-line-segment-region ()
   "Return the size of the active region in the current buffer, if any."
   (when (use-region-p)
     (format #("%sL:%sC"
-              0 7 (face mood-line-unimportant))
+              0 7 (face esprit-line-unimportant))
             (count-lines (region-beginning)
                          (region-end))
             (- (region-end) (region-beginning)))))
@@ -659,15 +659,15 @@ Modal editing modes checked, in order:
 ;; Scroll segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-scroll ()
+(defun esprit-line-segment-scroll ()
   "Return the relative position of the viewport in the current buffer."
-  (format-mode-line "%o" 'mood-line-unimportant))
+  (format-mode-line "%o" 'esprit-line-unimportant))
 
 ;; ---------------------------------- ;;
 ;; EOL segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-eol ()
+(defun esprit-line-segment-eol ()
   "Return the EOL type for the coding system of the current buffer."
   (when buffer-file-coding-system
     (pcase (coding-system-eol-type buffer-file-coding-system)
@@ -679,7 +679,7 @@ Modal editing modes checked, in order:
 ;; Encoding segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-encoding ()
+(defun esprit-line-segment-encoding ()
   "Return the name of the coding system of the current buffer."
   (when buffer-file-coding-system
     (let ((coding-system (coding-system-plist buffer-file-coding-system)))
@@ -694,27 +694,27 @@ Modal editing modes checked, in order:
 ;; Major mode segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-major-mode ()
+(defun esprit-line-segment-major-mode ()
   "Return the name of the major mode of the current buffer."
   (propertize (substring-no-properties (format-mode-line mode-name))
-              'face 'mood-line-major-mode))
+              'face 'esprit-line-major-mode))
 
 ;; ---------------------------------- ;;
 ;; Misc. info segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-misc-info ()
+(defun esprit-line-segment-misc-info ()
   "Return the current value of `mode-line-misc-info'."
   (let ((misc-info (format-mode-line mode-line-misc-info)))
     (unless (string-blank-p misc-info)
       (propertize (string-trim misc-info)
-                  'face 'mood-line-unimportant))))
+                  'face 'esprit-line-unimportant))))
 
 ;; ---------------------------------- ;;
 ;; Process segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-process ()
+(defun esprit-line-segment-process ()
   "Return the current value of `mode-line-process'."
   (let ((process-info (format-mode-line mode-line-process)))
     (unless (string-blank-p process-info)
@@ -722,75 +722,75 @@ Modal editing modes checked, in order:
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
-;; mood-line-mode
+;; esprit-line-mode
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defconst mood-line--hooks-alist
-  '((mood-line-segment-checker--flycheck-update
+(defconst esprit-line--hooks-alist
+  '((esprit-line-segment-checker--flycheck-update
      . (flycheck-mode-hook
         flycheck-status-changed-functions))
-    (mood-line-segment-vc--update
+    (esprit-line-segment-vc--update
      . (find-file-hook
         after-save-hook)))
   "Alist of update functions and their corresponding hooks.")
 
-(defconst mood-line--advice-alist
-  '((mood-line-segment-checker--flymake-update
+(defconst esprit-line--advice-alist
+  '((esprit-line-segment-checker--flymake-update
      . (flymake-start
         flymake--handle-report))
-    (mood-line-segment-vc--update
+    (esprit-line-segment-vc--update
      . (vc-refresh-state)))
   "Alist of update functions and their corresponding advised functions.")
 
-(defconst mood-line--settings-alist
+(defconst esprit-line--settings-alist
   '((anzu-cons-mode-line-p
      . nil)
     (mode-line-format
-     . (:eval (mood-line--process-format mood-line-format))))
+     . (:eval (esprit-line--process-format esprit-line-format))))
   "Alist providing symbol names and their desired values.
-These settings are applied by `mood-line--activate' when `mood-line-mode'
+These settings are applied by `esprit-line--activate' when `esprit-line-mode'
 is activated. The original value of each symbol will be stored in
-`mood-line--settings-backup-alist' until `mood-line--deactivate' is called.")
+`esprit-line--settings-backup-alist' until `esprit-line--deactivate' is called.")
 
-(defvar mood-line--settings-backup-alist nil
+(defvar esprit-line--settings-backup-alist nil
   "Alist storing symbol names and their original values.
-Populated by `mood-line--activate', and emptied by `mood-line--deactivate'.")
+Populated by `esprit-line--activate', and emptied by `esprit-line--deactivate'.")
 
 ;; ---------------------------------- ;;
 ;; Activation
 ;; ---------------------------------- ;;
 
-(defun mood-line--activate ()
-  "Activate mood-line, installing hooks and setting `mode-line-format'."
+(defun esprit-line--activate ()
+  "Activate esprit-line, installing hooks and setting `mode-line-format'."
   ;; Install hooks and advice
-  (cl-loop for (update-fn . hooks) in mood-line--hooks-alist
+  (cl-loop for (update-fn . hooks) in esprit-line--hooks-alist
            do (dolist (hook hooks)
                 (add-hook hook update-fn)))
-  (cl-loop for (update-fn . advised-fns) in mood-line--advice-alist
+  (cl-loop for (update-fn . advised-fns) in esprit-line--advice-alist
            do (dolist (advised-fn advised-fns)
                 (advice-add advised-fn :after update-fn)))
   ;; Install configuration, backing up original values
-  (cl-loop for (var . new-val) in mood-line--settings-alist
+  (cl-loop for (var . new-val) in esprit-line--settings-alist
            when (boundp var) do (push (cons var (eval var))
-                                      mood-line--settings-backup-alist)
+                                      esprit-line--settings-backup-alist)
            do (set-default (intern (symbol-name var)) new-val)))
 
 ;; ---------------------------------- ;;
 ;; Deactivation
 ;; ---------------------------------- ;;
 
-(defun mood-line--deactivate ()
-  "Deactivate mood-line, uninstalling hooks and restoring `mode-line-format'."
+(defun esprit-line--deactivate ()
+  "Deactivate esprit-line, uninstalling hooks and restoring `mode-line-format'."
   ;; Destroy hooks and advice
-  (cl-loop for (update-fn . hooks) in mood-line--hooks-alist
+  (cl-loop for (update-fn . hooks) in esprit-line--hooks-alist
            do (dolist (hook hooks)
                 (remove-hook hook update-fn)))
-  (cl-loop for (update-fn . advised-fns) in mood-line--advice-alist
+  (cl-loop for (update-fn . advised-fns) in esprit-line--advice-alist
            do (dolist (advised-fn advised-fns)
                 (advice-remove advised-fn update-fn)))
   ;; Restore original configuration values
-  (cl-loop for (var . old-val) in mood-line--settings-backup-alist
+  (cl-loop for (var . old-val) in esprit-line--settings-backup-alist
            do (set-default (intern (symbol-name var)) old-val)))
 
 ;; ---------------------------------- ;;
@@ -798,14 +798,14 @@ Populated by `mood-line--activate', and emptied by `mood-line--deactivate'.")
 ;; ---------------------------------- ;;
 
 ;;;###autoload
-(define-minor-mode mood-line-mode
-  "Toggle mood-line on or off."
-  :group 'mood-line
+(define-minor-mode esprit-line-mode
+  "Toggle esprit-line on or off."
+  :group 'esprit-line
   :global t
   :lighter nil
-  (if mood-line-mode
-      (mood-line--activate)
-    (mood-line--deactivate)))
+  (if esprit-line-mode
+      (esprit-line--activate)
+    (esprit-line--deactivate)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -813,6 +813,6 @@ Populated by `mood-line--activate', and emptied by `mood-line--deactivate'.")
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(provide 'mood-line)
+(provide 'esprit-line)
 
-;;; mood-line.el ends here
+;;; esprit-line.el ends here

@@ -1,7 +1,7 @@
-;;; mood-line-segment-vc.el --- A vc-mode info segment for mood-line -*- lexical-binding: t; -*-
+;;; esprit-line-segment-vc.el --- A vc-mode info segment for esprit-line -*- lexical-binding: t; -*-
 ;;
 ;; Author: Jessie Hildebrandt <jessieh.net>
-;; Homepage: https://gitlab.com/jessieh/mood-line
+;; Homepage: https://gitlab.com/ludamillion/esprit-line
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -39,7 +39,7 @@
 ;; ---------------------------------- ;;
 
 (eval-when-compile
-  (declare-function mood-line--get-glyph "mood-line"))
+  (declare-function esprit-line--get-glyph "esprit-line"))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -47,7 +47,7 @@
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-vc--rev (vc-mode-str backend)
+(defun esprit-line-segment-vc--rev (vc-mode-str backend)
   "Return name of current file's revision for BACKEND according to `vc-mode'.
 VC-MODE-STR is expected to be the value of `vc-mode' in the current buffer.
 If `vc-display-status' is nil, return the name of BACKEND."
@@ -66,41 +66,41 @@ If `vc-display-status' is nil, return the name of BACKEND."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defvar-local mood-line-segment-vc--text nil
+(defvar-local esprit-line-segment-vc--text nil
   "Mode line segment string indicating the current state of `vc-mode'.")
 
-(defun mood-line-segment-vc--update (&rest _args)
-  "Update `mood-line-segment-vc--text' against the current VCS state."
-  (setq mood-line-segment-vc--text
+(defun esprit-line-segment-vc--update (&rest _args)
+  "Update `esprit-line-segment-vc--text' against the current VCS state."
+  (setq esprit-line-segment-vc--text
         (when-let* ((vc-active (and vc-mode buffer-file-name))
                     (backend (vc-backend buffer-file-name))
                     (state (vc-state buffer-file-name))
-                    (rev (mood-line-segment-vc--rev vc-mode backend)))
+                    (rev (esprit-line-segment-vc--rev vc-mode backend)))
           (cond
            ((memq state '(edited added))
             (format #("%s %s"
-                      0 2 (face mood-line-status-info))
-                    (mood-line--get-glyph :vc-added)
+                      0 2 (face esprit-line-status-info))
+                    (esprit-line--get-glyph :vc-added)
                     rev))
            ((eq state 'needs-merge)
             (format #("%s %s"
-                      0 2 (face mood-line-status-warning))
-                    (mood-line--get-glyph :vc-needs-merge)
+                      0 2 (face esprit-line-status-warning))
+                    (esprit-line--get-glyph :vc-needs-merge)
                     rev))
            ((eq state 'needs-update)
             (format #("%s %s"
-                      0 2 (face mood-line-status-warning))
-                    (mood-line--get-glyph :vc-needs-update)
+                      0 2 (face esprit-line-status-warning))
+                    (esprit-line--get-glyph :vc-needs-update)
                     rev))
            ((memq state '(removed conflict unregistered))
             (format #("%s %s"
-                      0 2 (face mood-line-status-error))
-                    (mood-line--get-glyph :vc-conflict)
+                      0 2 (face esprit-line-status-error))
+                    (esprit-line--get-glyph :vc-conflict)
                     rev))
            (t
             (format #("%s %s"
-                      0 5 (face mood-line-status-neutral))
-                    (mood-line--get-glyph :vc-good)
+                      0 5 (face esprit-line-status-neutral))
+                    (esprit-line--get-glyph :vc-good)
                     rev))))))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -109,6 +109,6 @@ If `vc-display-status' is nil, return the name of BACKEND."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(provide 'mood-line-segment-vc)
+(provide 'esprit-line-segment-vc)
 
-;;; mood-line-segment-vc.el ends here
+;;; esprit-line-segment-vc.el ends here

@@ -1,8 +1,8 @@
-;;; mood-line-segment-modal.el --- A modal editing status segment for mood-line -*- lexical-binding: t; -*-
+;;; esprit-line-segment-modal.el --- A modal editing status segment for esprit-line -*- lexical-binding: t; -*-
 ;;
 ;; Author: trevDev() <trev@trevdev.ca>
 ;;         Jessie Hildebrandt <jessieh.net>
-;; Homepage: https://gitlab.com/jessieh/mood-line
+;; Homepage: https://gitlab.com/ludamillion/esprit-line
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -39,15 +39,15 @@
 ;; Group definitions
 ;; ---------------------------------- ;;
 
-(defgroup mood-line-segment-modal nil
-  "A modal editing status segment for mood-line."
-  :group 'mood-line)
+(defgroup esprit-line-segment-modal nil
+  "A modal editing status segment for esprit-line."
+  :group 'esprit-line)
 
 ;; ---------------------------------- ;;
 ;; Variable definitions
 ;; ---------------------------------- ;;
 
-(defcustom mood-line-segment-modal-evil-state-alist
+(defcustom esprit-line-segment-modal-evil-state-alist
   '((normal . ("<N>" . font-lock-variable-name-face))
     (insert . ("<I>" . font-lock-string-face))
     (visual . ("<V>" . font-lock-keyword-face))
@@ -58,12 +58,12 @@
   "Alist specifying indicators and faces for corresponding `evil-mode' states.
 The face may be either a face symbol or a property list of key-value pairs;
 e.g., (:foreground \"red\")."
-  :group 'mood-line-segment-modal
+  :group 'esprit-line-segment-modal
   :type '(alist :key-type symbol
                 :value-type (cons (string :tag "Display text")
                                   (choice :tag "Face" face plist))))
 
-(defcustom mood-line-segment-modal-meow-state-alist
+(defcustom esprit-line-segment-modal-meow-state-alist
   '((normal . ("<N>" . font-lock-variable-name-face))
     (insert . ("<I>" . font-lock-string-face))
     (keypad . ("<K>" . font-lock-keyword-face))
@@ -72,7 +72,7 @@ e.g., (:foreground \"red\")."
   "Alist specifying indicators and faces corresponding `meow-mode' states.
 The face may be either a face symbol or a property list of key-value pairs;
 e.g., (:foreground \"red\")."
-  :group 'mood-line-segment-modal
+  :group 'esprit-line-segment-modal
   :type '(alist :key-type symbol
                 :value-type (cons (string :tag "Display text")
                                   (choice :tag "Face" face plist))))
@@ -87,11 +87,11 @@ e.g., (:foreground \"red\")."
 ;; Evil segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-modal--evil-fn ()
+(defun esprit-line-segment-modal--evil-fn ()
   "Return the current `evil-mode' state."
   (when (boundp 'evil-state)
     (let ((mode-cons (alist-get evil-state
-                                mood-line-segment-modal-evil-state-alist)))
+                                esprit-line-segment-modal-evil-state-alist)))
       (concat (propertize (car mode-cons)
                           'face (cdr mode-cons))))))
 
@@ -99,11 +99,11 @@ e.g., (:foreground \"red\")."
 ;; Meow segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-modal--meow-fn ()
+(defun esprit-line-segment-modal--meow-fn ()
   "Return the current `meow-mode' state."
   (when (boundp 'meow--current-state)
     (let ((mode-cons (alist-get meow--current-state
-                                mood-line-segment-modal-meow-state-alist)))
+                                esprit-line-segment-modal-meow-state-alist)))
       (concat (propertize (car mode-cons)
                           'face (cdr mode-cons))))))
 
@@ -111,7 +111,7 @@ e.g., (:foreground \"red\")."
 ;; Xah segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-modal--xah-fn ()
+(defun esprit-line-segment-modal--xah-fn ()
   "Display the current xah-fly-keys state."
   (if (bound-and-true-p xah-fly-insert-state-p)
       "<I>"
@@ -121,10 +121,10 @@ e.g., (:foreground \"red\")."
 ;; God segment
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-modal--god-fn ()
+(defun esprit-line-segment-modal--god-fn ()
   "Return an indicator of whether or not `god-mode' is active."
   (if (bound-and-true-p god-local-mode)
-      (propertize "<G>" 'face 'mood-line-status-warning)
+      (propertize "<G>" 'face 'esprit-line-status-warning)
     "---"))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -133,6 +133,6 @@ e.g., (:foreground \"red\")."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(provide 'mood-line-segment-modal)
+(provide 'esprit-line-segment-modal)
 
-;;; mood-line-segment-modal.el ends here
+;;; esprit-line-segment-modal.el ends here
