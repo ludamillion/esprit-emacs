@@ -443,10 +443,11 @@ described in the documentation for `esprit-line-format', which see."
   (let ((right-str (esprit-line--process-segments (cadr format))))
     (esprit-line--escape
      (esprit-line--process-segments (car format))
-     " "
+     (propertize " " 'face 'shadow 'display '(raise +0.30))
      (propertize " "
                  'display `((space :align-to (- right (- 0 right-margin)
                                                 ,(length right-str)))))
+     (propertize " " 'face 'shadow 'display '(raise -0.30))
      right-str)))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -508,7 +509,7 @@ Modal editing modes checked, in order:
 (defvar-local esprit-line-segment-checker--flymake-text nil)
 
 (defun esprit-line-segment-checker ()
-  "Return status information for flycheck or flymake, if active."
+  "Return status information for Flycheck or Flymake, if active."
   (cond
    ((bound-and-true-p flycheck-mode)
     esprit-line-segment-checker--flycheck-text)
