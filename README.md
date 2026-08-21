@@ -36,9 +36,9 @@ If you are a user of `use-package`, it is easy to configure mood-line directly i
   :config
   (mood-line-mode)
 
-  ;; Use pretty Fira Code-compatible glyphs
+  ;; Use pretty Unicode-compatible glyphs
   :custom
-  (mood-line-glyph-alist mood-line-glyphs-fira-code))
+  (mood-line-glyph-alist mood-line-glyphs-unicode))
 ```
 
 ### Format
@@ -82,10 +82,6 @@ If you'd like to see prettier Unicode glyphs, you can change the value of `mood-
 ;; The default set of glyphs:
 ;;   * myModifiedFile.js  Replace*3                 + main  JavaScript  ! Issues: 2
 (setq mood-line-glyph-alist mood-line-glyphs-ascii)
-
-;; A set of Fira Code-compatible Unicode glyphs:
-;;   ● myModifiedFile.js  Replace×3                 + main  JavaScript  → Issues: 2
-(setq mood-line-glyph-alist mood-line-glyphs-fira-code)
 
 ;; A set of Unicode glyphs:
 ;;   ● myModifiedFile.js  Replace✕3                 🞤 main  JavaScript  ⚑ Issues: 2

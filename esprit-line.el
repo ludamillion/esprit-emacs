@@ -143,34 +143,12 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-narrowed . ?v)
     (:buffer-modified . ?*)
     (:buffer-read-only . ?#)
+    (:buffer-remote . ?@)
 
     (:frame-client . ?@)
 
     (:count-separator . ?*))
   "Set of ASCII glyphs for use with esprit-line.")
-
-(defconst esprit-line-glyphs-fira-code
-  '((:checker-info . ?↳)
-    (:checker-issues . ?→)
-    (:checker-good . ?✓)
-    (:checker-checking . ?⟳)
-    (:checker-errored . ?x)
-    (:checker-interrupted . ?=)
-
-    (:vc-added . ?+)
-    (:vc-needs-merge . ?⟷)
-    (:vc-needs-update . ?↓)
-    (:vc-conflict . ?x)
-    (:vc-good . ?✓)
-
-    (:buffer-narrowed . ?◢)
-    (:buffer-modified . ?●)
-    (:buffer-read-only . ?■)
-
-    (:frame-client . ?)
-
-    (:count-separator . ?×))
-  "Set of Fira Code-compatible glyphs for use with esprit-line.")
 
 (defconst esprit-line-glyphs-unicode
   '((:checker-info . ?🛈)
@@ -189,6 +167,7 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-narrowed . ?▼)
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
+    (:buffer-remote . ?⎘)
 
     (:frame-client . ?⇅)
 
@@ -269,7 +248,6 @@ An optional key :padding may be provided, the value of which will be used as
 esprit-line includes several sets of glyphs by default:
 
  `esprit-line-glyphs-ascii'     | Basic ASCII character glyphs
- `esprit-line-glyphs-fira-code' | Fira Code-compatible glyphs
  `esprit-line-glyphs-unicode'   | Fancy unicode glyphs
 
 Note that if a character provided by a glyph set is not included in your default
@@ -336,7 +314,7 @@ See `esprit-line-defformat' for a helpful formatting macro."
 ;; ---------------------------------- ;;
 
 (defface esprit-line-buffer-name
-  '((t (:inherit mode-line-buffer-id)))
+  '((t (:inherit mode-line-buffer-id :italic t)))
   "Face used for displaying the value of `buffer-name'."
   :group 'esprit-line-faces)
 
@@ -622,8 +600,18 @@ Modal editing modes checked, in order:
 ;; ---------------------------------- ;;
 
 (defun esprit-line-segment-buffer-name ()
-  "Return the name of the current buffer."
-  (format-mode-line "%b" 'esprit-line-buffer-name))
+  "Return the name of the current buffer with an indicator for remote files."
+  ;; (propertize (format "%s" (buffer-name)) 'face 'esprit-line-buffer-name)
+  (let* ((name (buffer-name))
+         (remote (and buffer-file-name
+                      (file-remote-p buffer-file-name))))
+    (if remote
+        (concat
+         (propertize name 'face 'esprit-line-buffer-name)
+         (propertize (format " %s" (esprit-line--get-glyph :buffer-remote))
+                     'help-echo (format "Remote: %s" (file-remote-p buffer-file-name 'host))
+                     'face 'esprit-line-status-info))
+      (propertize name 'face 'esprit-line-buffer-name))))
 
 ;; ---------------------------------- ;;
 ;; Cursor position segment
