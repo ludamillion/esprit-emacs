@@ -39,6 +39,7 @@
 ;; ---------------------------------- ;;
 
 (eval-when-compile
+  (require 'cl-lib)
   (require 'flymake))
 
 ;; ---------------------------------- ;;
@@ -146,8 +147,8 @@
 (defun esprit-line-segment-checker--flymake-update (&rest _args)
   "Update `esprit-line-segment-checker--flymake-state' with flymake's status."
   (setq esprit-line-segment-checker--flymake-text
-        (when-let ((flymake-active (and (fboundp 'flymake-is-running)
-                                        (flymake-is-running)))
+        (when-let* ((flymake-active (and (fboundp 'flymake-is-running)
+                                         (flymake-is-running)))
                    (status (if (seq-difference (flymake-running-backends)
                                                (flymake-reporting-backends))
                                'running 'finished))

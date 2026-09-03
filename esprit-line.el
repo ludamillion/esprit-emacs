@@ -178,7 +178,7 @@ An optional key :padding may be provided, the value of which will be used as
   (esprit-line-defformat
    :left
    (((esprit-line-segment-modal)                  . " ")
-    ((or (esprit-line-segment-buffer-status) " ") . " ")
+    ((or (esprit-line-segment-buffer-status) "൧ဗ") . " ")
     ((esprit-line-segment-buffer-name)            . "  ")
     ((esprit-line-segment-anzu)                   . "  ")
     ((esprit-line-segment-multiple-cursors)       . "  ")
@@ -410,7 +410,7 @@ Segments are processed according to the rules described in the documentation
 for `esprit-line-format', which see."
   (cl-loop with last = t
            for seg in segments
-           if last do (setq last (eval seg)) and concat last
+           if last do (setq last (eval seg t)) and concat last
            else do (setq last t)))
 
 (defun esprit-line--process-format (format)
@@ -418,13 +418,14 @@ for `esprit-line-format', which see."
 Returned string is padded in the center to fit the width of the window.
 Left and right segment lists of FORMAT will be processed according to the rules
 described in the documentation for `esprit-line-format', which see."
-  (let ((right-str (esprit-line--process-segments (cadr format))))
-    (esprit-line--escape
-     (esprit-line--process-segments (car format))
+  (let* ((left-str (esprit-line--escape (esprit-line--process-segments (car format))))
+         (right-str (esprit-line--escape (esprit-line--process-segments (cadr format)))))
+    (concat
+     left-str
      (propertize " " 'face 'shadow 'display '(raise +0.30))
      (propertize " "
                  'display `((space :align-to (- right (- 0 right-margin)
-                                                ,(length right-str)))))
+                                                ,(string-width right-str)))))
      (propertize " " 'face 'shadow 'display '(raise -0.30))
      right-str)))
 
@@ -721,11 +722,16 @@ Modal editing modes checked, in order:
         flycheck-status-changed-functions))
     (esprit-line-segment-vc--update
      . (find-file-hook
-        after-save-hook)))
+        after-save-hook
+        after-revert-hook
+        magit-post-refresh-hook)))
   "Alist of update functions and their corresponding hooks.")
 
 (defconst esprit-line--advice-alist
   '((esprit-line-segment-checker--flymake-update
+     ;; flymake has no public "status changed" hook, so we advise its
+     ;; internal report handler instead; this may break across Emacs
+     ;; versions since `flymake--handle-report' isn't public API.
      . (flymake-start
         flymake--handle-report))
     (esprit-line-segment-vc--update
@@ -760,6 +766,7 @@ Populated by `esprit-line--activate', and emptied by `esprit-line--deactivate'."
            do (dolist (advised-fn advised-fns)
                 (advice-add advised-fn :after update-fn)))
   ;; Install configuration, backing up original values
+  (setq esprit-line--settings-backup-alist nil)
   (cl-loop for (var . new-val) in esprit-line--settings-alist
            when (boundp var) do (push (cons var (eval var))
                                       esprit-line--settings-backup-alist)
@@ -780,7 +787,8 @@ Populated by `esprit-line--activate', and emptied by `esprit-line--deactivate'."
                 (advice-remove advised-fn update-fn)))
   ;; Restore original configuration values
   (cl-loop for (var . old-val) in esprit-line--settings-backup-alist
-           do (set-default (intern (symbol-name var)) old-val)))
+           do (set-default (intern (symbol-name var)) old-val))
+  (setq esprit-line--settings-backup-alist nil))
 
 ;; ---------------------------------- ;;
 ;; Mode definition

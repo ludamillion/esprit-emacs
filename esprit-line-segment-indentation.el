@@ -199,10 +199,10 @@ When multiple variables are specified for a given mode, the offset value will
 
 (defun esprit-line-segment-indentation ()
   "Return the indentation style of the current buffer."
-  (let* ((mode-offset (symbol-value
-                       (seq-some #'identity
-                                 (cdr (assoc major-mode
-                                             esprit-line-segment-indentation-mode-offset-alist))))))
+  (let* ((offset-var (seq-find #'boundp
+                               (cdr (assoc major-mode
+                                           esprit-line-segment-indentation-mode-offset-alist))))
+         (mode-offset (and offset-var (symbol-value offset-var))))
     (propertize (concat (if indent-tabs-mode "TAB" "SPC")
                         (esprit-line--get-glyph :count-separator)
                         (if esprit-line-segment-indentation-always-show-offset

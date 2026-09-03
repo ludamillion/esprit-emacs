@@ -92,8 +92,10 @@ e.g., (:foreground \"red\")."
   (when (boundp 'evil-state)
     (let ((mode-cons (alist-get evil-state
                                 esprit-line-segment-modal-evil-state-alist)))
-      (concat (propertize (car mode-cons)
-                          'face (cdr mode-cons))))))
+      (if mode-cons
+          (concat (propertize (car mode-cons)
+                              'face (cdr mode-cons)))
+        (format "<%s>" evil-state)))))
 
 ;; ---------------------------------- ;;
 ;; Meow segment
@@ -104,8 +106,10 @@ e.g., (:foreground \"red\")."
   (when (boundp 'meow--current-state)
     (let ((mode-cons (alist-get meow--current-state
                                 esprit-line-segment-modal-meow-state-alist)))
-      (concat (propertize (car mode-cons)
-                          'face (cdr mode-cons))))))
+      (if mode-cons
+          (concat (propertize (car mode-cons)
+                              'face (cdr mode-cons)))
+        (format "<%s>" meow--current-state)))))
 
 ;; ---------------------------------- ;;
 ;; Xah segment

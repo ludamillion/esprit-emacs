@@ -1,10 +1,10 @@
-;;; mood-line-segment-vc-test.el --- Test specifications for mood-line-segment-vc.el -*- lexical-binding: t; -*-
+;;; esprit-line-segment-vc-test.el --- Test specifications for esprit-line-segment-vc.el -*- lexical-binding: t; -*-
 
 (add-to-list 'load-path ".")
 
 (require 'ert)
-(require 'mood-line)
-(require 'mood-line-segment-vc)
+(require 'esprit-line)
+(require 'esprit-line-segment-vc)
 
 ;;; Code:
 
@@ -15,31 +15,31 @@
 ;; -------------------------------------------------------------------------- ;;
 
 ;; ---------------------------------- ;;
-;; mood-line-segment-vc--rev
+;; esprit-line-segment-vc--rev
 ;; ---------------------------------- ;;
 
 (ert-deftest --rev/git ()
   "Current rev should be cleanly extracted from git `vc-mode' status string."
-  (should (string= (mood-line-segment-vc--rev " Git:main" 'Git)
+  (should (string= (esprit-line-segment-vc--rev " Git:main" 'Git)
                    "main")))
 
 (ert-deftest --rev/hg ()
   "Current rev should be cleanly extracted from hg `vc-mode' status string."
-  (should (string= (mood-line-segment-vc--rev " Hg:main" 'Hg)
+  (should (string= (esprit-line-segment-vc--rev " Hg:main" 'Hg)
                    "main")))
 
 (ert-deftest --rev/unknown ()
   "Current rev should be reported as \"???\" when backend is unsupported."
   (let ((buffer-file-name ""))
-    (should (string= (mood-line-segment-vc--rev "" 'SVN)
+    (should (string= (esprit-line-segment-vc--rev "" 'SVN)
                      "???"))))
 
 (ert-deftest --rev/vc-display-status-nil ()
   "Name of the VCS backend should be reported when `vc-display-status' is nil."
   (let ((vc-display-status nil))
-    (should (string= (mood-line-segment-vc--rev " Git:main" 'Git)
+    (should (string= (esprit-line-segment-vc--rev " Git:main" 'Git)
                      "Git"))
-    (should (string= (mood-line-segment-vc--rev " Hg:main" 'Hg)
+    (should (string= (esprit-line-segment-vc--rev " Hg:main" 'Hg)
                      "Hg"))))
 
-;;; mood-line-segment-vc-test.el ends here
+;;; esprit-line-segment-vc-test.el ends here
