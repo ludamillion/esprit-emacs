@@ -673,7 +673,6 @@ prompts for a group name via `completing-read'."
          ("M-[" . flymake-goto-prev-error))
   :custom
   (flymake-suppress-zero-counters t)
-  (flymake-no-changes-timeout nil)
   (flymake-mode-line-format
    '("" flymake-mode-line-exception flymake-mode-line-counters))
   (flymake-mode-line-counter-format
@@ -704,20 +703,8 @@ prompts for a group name via `completing-read'."
    ("C-x j n" . jinx-next)
    ("C-x j p" . jinx-previous)))
 
-(defun require-and-ensure-eglot-ltex ()
-  "Require the eglot-ltex package and run `eglot-ensure'."
-  (require 'eglot-ltex)
-  (eglot-ensure))
-
-(use-package eglot-ltex
-  :vc (:url "https://github.com/emacs-languagetool/eglot-ltex")
-  :init
-  (setq eglot-ltex-server-path "~/tools/ltex-ls-plus/bin/ltex-ls-plus"
-        eglot-ltex-communication-channel 'stdio)
-  :config
-  (dolist (mode esprit-prose-modes)
-    (add-hook (intern (format "%s-hook" mode))
-              #'require-and-ensure-eglot-ltex)))
+(dolist (mode esprit-prose-modes)
+  (add-hook (intern (format "%s-hook" mode)) #'eglot-ensure))
 
 (use-package quick-sdcv
   :ensure t
@@ -912,13 +899,21 @@ process."
                                  (:formatter "standard" :linters ["standard"] :enabledFeatures (:codeActions t :diagnostics t :formatting t)))))
   (add-to-list 'eglot-server-programs
                '((typescript-ts-mode html-ts-mode json-ts-mode) . esprit/eglot-typescript-contact))
+  (add-to-list 'eglot-server-programs
+               '(((rst-mode :language-id "restructuredtext")
+                  latex-mode context-mode bibtex-mode org-mode
+                  (text-mode :language-id "plaintext"))
+                 . ("ltex-ls-plus")))
+  (add-to-list 'eglot-server-programs
+               '(markdown-mode . ("rass" "--" "marksman" "server"
+                                  "--" "ltex-ls-plus")))
   (dolist (hook '(html-ts-mode-hook json-ts-mode-hook))
     (add-hook hook (lambda ()
                      (when (locate-dominating-file default-directory "angular.json")
                        (eglot-ensure)))))
   (setq-default eglot-workspace-configuration
-                '(:ltex-ls (:language "en-US"
-                                      :disabledRules ["MORFOLOGIK_RULE_EN_US"]))))
+                '(:ltex (:language "en-US"
+                                   :disabledRules (:en-US ["MORFOLOGIK_RULE_EN_US"])))))
 
 (use-package eldoc
   :custom
@@ -1660,7 +1655,7 @@ otherwise create a new window."
 
 (use-package mise
   :ensure t
-  :hook (after-init . #'global-mise-mode))
+  :hook (after-init . global-mise-mode))
 
 (use-package ct
   :vc (:url "https://github.com/neeasade/ct.el" :branch "master"))
