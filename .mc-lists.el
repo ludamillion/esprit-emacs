@@ -9,6 +9,7 @@
         exit-recursive-edit
         indent-for-tab-command
         keyboard-escape-quit
+        mc--insert-number-and-increase
         org-delete-char
         org-self-insert-command
         org-yank
@@ -16,11 +17,14 @@
 
 (setq mc/cmds-to-run-once
       '(
+        backward-sexp
         consult-yank-pop
         dabbrev-completion
         embark-act
         end-of-buffer
         end-of-visual-line
+        forward-sexp
         goto-line
+        helpful-callable
         pixel-scroll-precision
         ))
