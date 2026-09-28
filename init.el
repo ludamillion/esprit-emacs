@@ -400,6 +400,7 @@ or is an ERC buffer."
   (xterm-mouse-mode 1)
   (file-name-shadow-mode 1) ; allows us to type a new path without having to delete the current one
   (global-visual-line-mode 1)
+  (global-display-line-numbers-mode 1)
   )
 
 (use-package tramp
@@ -468,6 +469,12 @@ or is an ERC buffer."
   :hook
   ((tramp-cleanup-connection . clear-memoized-caches)
    (tramp-cleanup-all-connections . clear-memoized-caches)))
+
+(use-package tramp-rpc
+  :after tramp
+  :vc (:url "https://github.com/ArthurHeymans/emacs-tramp-rpc"
+       :rev :newest
+       :lisp-dir "lisp"))
 
 (use-package ibuffer
   :init
@@ -856,11 +863,7 @@ firing after Eglot has disconnected from the buffer."
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :ensure t
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
-
-
+  :ensure t)
 
 (use-package eglot
   :demand t
@@ -992,9 +995,25 @@ process."
 (use-package elec-pair
   :hook (after-init . electric-pair-mode))
 
+(use-package proced
+  :ensure nil
+  :defer t
+  :custom
+  (proced-enable-color-flag t)
+  (proced-tree-flag t)
+  (proced-auto-update-flag 'visible)
+  (proced-auto-update-interval 1)
+  (proced-descend t)
+  (proced-format 'medium)
+  (proced-filter 'user))
+
 (use-package accent
   :ensure t
-  :bind ("C-x '" . #'accent-menu))
+  :bind ("C-x '" . #'accent-menu)
+  :custom
+  ;; Use the character after the cursor instead of before
+  (accent-position 'after)
+  (accent-custom '((0 (°)))))
 
 ;; (keymap-global-set [remap dabbrev-expand] 'hippie-expand)
 
@@ -1065,17 +1084,14 @@ process."
   (fontaine-latest-state-file "fontaine-latest-state.eld")
   :custom
   (fontaine-presets
-   '((small
-      :default-family "Ioskeley Mono"
-      :default-height 80
-      :variable-pitch-family "Atkinson Hyperlegible Next")
+   '((small :default-height 80)
      (regular) ; like this it uses all the fallback values and is named `regular'
      (medium  :default-height 140 :bold-weight semi-bold)
      (laptop  :inherit medium :default-height 130)
      (desktop :inherit medium :default-height 150)
      (large   :inherit medium :default-height 180)
      (t
-      :default-family "Ioskeley Mono"
+      :default-family "JuliaMono"
       :variable-pitch-family "Atkinson Hyperlegible Next"
       :fixed-pitch-height 1.0
       :fixed-pitch-serif-height 1.0
@@ -1148,6 +1164,12 @@ process."
          ("M" . ghostel-project-list-buffers))
   :custom
   (ghostel-tramp-shell-integration t)
+  (ghostel-tramp-shells
+   '(("ssh" login-shell)
+     ("sshx" login-shell)
+     ("scp" login-shell)
+     ("rpc" login-shell)
+     ("docker" "/bin/sh")))
   :config
   (defun ghostel-send-C-k-and-kill ()
     "Send `C-k' to ghostel.
@@ -1477,7 +1499,8 @@ otherwise create a new window."
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (shell . t)))
+     (shell . t)
+     (lua . t)))
   :bind
   ("C-c a" . org-agenda)
   ("C-c c" . org-capture)
@@ -1606,7 +1629,6 @@ otherwise create a new window."
   (global-obsidian-mode t)
   (obsidian-backlinks-mode t)
   :custom
-  ;; location of obsidian vault
   (obsidian-directory "~/pkm")
 
   ;; These bindings are only suggestions; it's okay to use other bindings
@@ -1622,6 +1644,16 @@ otherwise create a new window."
               ;; Follow a backlink for the current file
               ("C-c C-b" . obsidian-backlink-jump)))
 
+(use-package xeft
+  :ensure t
+  :after obsidian
+  :bind ((:map obsidian-mode-map (("C-c C-g" . xeft))))
+  :custom
+  (xeft-directory obsidian-directory)
+  (xeft-recursive t)
+  (xeft-file-filter #'obsidian-file-p)
+  (xeft-title-function #'obsidian-file-title-function))
+
 (use-package csv-mode
   :ensure t
   :mode (rx ".csv" eos))
@@ -1629,6 +1661,9 @@ otherwise create a new window."
 (use-package mise
   :ensure t
   :hook (after-init . #'global-mise-mode))
+
+(use-package ct
+  :vc (:url "https://github.com/neeasade/ct.el" :branch "master"))
 
 (provide 'init)
 ;;; init.el ends here
