@@ -20,13 +20,13 @@
   :vc (:url "https://codeberg.org/rossabaker/use-package-xdg")
   :demand t)
 
-;; (use-package exec-path-from-shell
-;;   :ensure t
-;;   :if (memq window-system '(mac ns x))
-;;   :custom
-;;   (exec-path-from-shell-variables '("PATH" "MANPATH" "XDG_CONFIG_DIRS" "XDG_DATA_DIRS"))
-;;   :config
-;;   (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :custom
+  (exec-path-from-shell-variables '("PATH" "MANPATH" "XDG_CONFIG_DIRS" "XDG_DATA_DIRS"))
+  :config
+  (exec-path-from-shell-initialize))
 
 (let ((inhibit-message t))
   (message "Welcome to GNU Emacs / Esprit Edition")

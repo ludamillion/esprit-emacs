@@ -18,6 +18,7 @@
 (setq mc/cmds-to-run-once
       '(
         backward-sexp
+        comment-line
         consult-yank-pop
         dabbrev-completion
         embark-act
