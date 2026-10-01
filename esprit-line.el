@@ -127,23 +127,23 @@ An optional key :padding may be provided, the value of which will be used as
 ;; -------------------------------------------------------------------------- ;;
 
 (defconst esprit-line-glyphs-ascii
-  '((:checker-info . ?i)
-    (:checker-issues . ?+)
-    (:checker-good . ?-)
-    (:checker-checking . ?~)
-    (:checker-errored . ?x)
+  '((:checker-info        . ?i)
+    (:checker-issues      . ?+)
+    (:checker-good        . ?-)
+    (:checker-checking    . ?~)
+    (:checker-errored     . ?x)
     (:checker-interrupted . ?=)
 
-    (:vc-added . ?+)
-    (:vc-needs-merge . ?>)
+    (:vc-added        . ?+)
+    (:vc-needs-merge  . ?>)
     (:vc-needs-update . ?v)
-    (:vc-conflict . ?x)
-    (:vc-good . ?-)
+    (:vc-conflict     . ?x)
+    (:vc-good         . ?-)
 
-    (:buffer-narrowed . ?v)
-    (:buffer-modified . ?*)
+    (:buffer-narrowed  . ?v)
+    (:buffer-modified  . ?*)
     (:buffer-read-only . ?#)
-    (:buffer-remote . ?@)
+    (:buffer-remote    . ?@)
 
     (:frame-client . ?@)
 
@@ -151,23 +151,23 @@ An optional key :padding may be provided, the value of which will be used as
   "Set of ASCII glyphs for use with esprit-line.")
 
 (defconst esprit-line-glyphs-unicode
-  '((:checker-info . ?🛈)
-    (:checker-issues . ?⚑)
-    (:checker-good . ?✔)
-    (:checker-checking . ?🗘)
-    (:checker-errored . ?✖)
+  '((:checker-info        . ?🛈)
+    (:checker-issues      . ?⚑)
+    (:checker-good        . ?✔)
+    (:checker-checking    . ?🗘)
+    (:checker-errored     . ?✖)
     (:checker-interrupted . ?⏸)
 
-    (:vc-added . ?🞤)
-    (:vc-needs-merge . ?⟷)
+    (:vc-added        . ?🞤)
+    (:vc-needs-merge  . ?⟷)
     (:vc-needs-update . ?↓)
-    (:vc-conflict . ?✖)
-    (:vc-good . ?✔)
+    (:vc-conflict     . ?✖)
+    (:vc-good         . ?✔)
 
-    (:buffer-narrowed . ?▼)
-    (:buffer-modified . ?●)
+    (:buffer-narrowed  . ?▼)
+    (:buffer-modified  . ?●)
     (:buffer-read-only . ?■)
-    (:buffer-remote . ?⎘)
+    (:buffer-remote    . ?⎘)
 
     (:frame-client . ?⇅)
 
@@ -177,13 +177,12 @@ An optional key :padding may be provided, the value of which will be used as
 (defconst esprit-line-format-default
   (esprit-line-defformat
    :left
-   (((esprit-line-segment-modal)                  . " ")
-    ((or (esprit-line-segment-buffer-status) "൧ဗ") . " ")
-    ((esprit-line-segment-buffer-name)            . "  ")
-    ((esprit-line-segment-anzu)                   . "  ")
-    ((esprit-line-segment-multiple-cursors)       . "  ")
-    ((esprit-line-segment-cursor-position)        . " ")
-    (esprit-line-segment-scroll))
+   (((esprit-line-segment-modal)            . " ")
+    ((esprit-line-segment-buffer-status)    . " ")
+    ((esprit-line-segment-buffer-name)      . "  ")
+    ((esprit-line-segment-anzu)             . "  ")
+    ((esprit-line-segment-multiple-cursors) . "  ")
+    ((esprit-line-segment-cursor-position)  . " "))
    :right
    (((esprit-line-segment-vc)         . "  ")
     ((esprit-line-segment-major-mode) . "  ")
