@@ -1,4 +1,4 @@
 [submodule "lisp/esprit-line"]
 	path = lisp/esprit-line
-	url = https://gitlab.com/ludamillion/esprit-line.git
+	url = git@gitlab.com:ludamillion/esprit-line.git
 	branch = main

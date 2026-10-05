@@ -6,10 +6,13 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(accent ace-window cape circadian claude-code combobulate command-log-mode consult-notes corfu
-            csv-mode ct denote eglot-ltex eldoc-box embark-consult exec-path-from-shell fontaine
-            ghostel helpful impatient-mode ipe jinx magit marginalia md-mermaid mini-ontop mise
-            monet multiple-cursors obsidian orderless quick-sdcv tempel-collection tramp-rpc
-            treesit-env undo-fu undo-fu-session use-package-xdg vertico web-mode wgrep xeft)))
+            csv-mode ct denote eglot-ltex eldoc-box emacs-mini-frame embark-consult
+            exec-path-from-shell fontaine ghostel helpful impatient-mode ipe jinx magit marginalia
+            md-mermaid mini-ontop mise monet multiple-cursors obsidian orderless quick-sdcv
+            tempel-collection tramp-rpc treesit-env undo-fu undo-fu-session use-package-xdg vertico
+            web-mode wgrep xeft))
+ '(package-vc-selected-packages
+   '((emacs-mini-frame :url "https://github.com/muffinmad/emacs-mini-frame"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
