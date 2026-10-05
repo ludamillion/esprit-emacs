@@ -1649,6 +1649,16 @@ otherwise create a new window."
   (xeft-file-filter #'obsidian-file-p)
   (xeft-title-function #'obsidian-file-title-function))
 
+(use-package emacs-mini-frame
+  :vc (:url "https://github.com/muffinmad/emacs-mini-frame")
+  :hook (after-init . mini-frame-mode)
+  :custom
+  (mini-frame-show-parameters
+   '((top . 0.05)
+     (width . 0.65)
+     (left . 0.5)
+     (child-frame-border-width . 7))))
+
 (use-package csv-mode
   :ensure t
   :mode (rx ".csv" eos))
