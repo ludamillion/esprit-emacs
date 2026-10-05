@@ -78,7 +78,7 @@
 (use-package emacs
   :ensure nil
   :xdg-state
-  (auto-save-list-prefix "saves/")
+  (auto-save-list-file-prefix ".saves-")
   :bind
   (("M-g r" . recentf)
    ("C-x ;" . comment-line)
@@ -389,8 +389,8 @@ or is an ERC buffer."
   (add-hook 'window-configuration-change-hook #'esprit-emacs/set-default-window-margins)
 
   (when (>= emacs-major-version 31)
-    (tty-tip-mode nil))   ;; EMACS-31
-  (tooltip-mode nil)
+    (tty-tip-mode -1))   ;; EMACS-31
+  (tooltip-mode -1)
 
   (select-frame-set-input-focus (selected-frame))
   (blink-cursor-mode 0)
@@ -514,7 +514,7 @@ or is an ERC buffer."
                      (mode . magit-diff-mode)
                      (mode . magit-log-mode)
                      (mode . magit-process-mode)
-                     (mode . magit-status-Mode)))
+                     (mode . magit-status-mode)))
            ("News"    (name   . "^\\*Newsticker.*"))
            ("chat"    (or
                        (mode  . rcirc-mode)
@@ -598,8 +598,8 @@ prompts for a group name via `completing-read'."
   (history-delete-duplicates t)
   (savehist-additional-variables savehist-watchlist))
 
-;;;; Savehist items above are saved when Emacs quits
-;;;; When that happens strip text properties from the
+;;;; Savehist saves the items above periodically and when Emacs quits.
+;;;; Before each save, strip text properties from the
 ;;;; kill-ring entries. This makes them much faster to
 ;;;; load when savehist restores them.
 
@@ -607,7 +607,7 @@ prompts for a group name via `completing-read'."
   "Strip all text properties from text save to the `kill-ring'."
   (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
 
-(add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
+(add-hook 'savehist-save-hook #'unpropertize-kill-ring)
 
 ;;;; Make keys a little more ergonomic in macOS and tell Dired not to
 ;;;; use the underlying ls
@@ -776,7 +776,9 @@ prompts for a group name via `completing-read'."
   :custom
   (completion-styles '(orderless partial-completion basic))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion))
+                                   (eglot (styles orderless))
+                                   (eglot-capf (styles orderless)))))
 
 (use-package corfu
   :ensure t
@@ -818,9 +820,6 @@ firing after Eglot has disconnected from the buffer."
     "Configure cape completion at point functions for org mode."
     (setq-local completion-at-point-functions
                 (list (cape-capf-super #'cape-dict #'cape-dabbrev))))
-  :custom
-  (completion-category-overrides '((eglot (styles orderless))
-                                   (eglot-capf (styles orderless))))
   :hook
   ((eglot-managed-mode . esprit/cape-capf-setup-eglot)
    (org-mode . esprit/cape-capf-setup-prose)
@@ -829,7 +828,7 @@ firing after Eglot has disconnected from the buffer."
 (use-package marginalia
   :ensure t
   :hook (after-init . marginalia-mode)
-  :custom (marginalia--align 'right)
+  :custom (marginalia-align 'right)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle)))
 
@@ -887,6 +886,7 @@ process."
   (defvar eglot-enabled-modes
     '(js-ts-mode
       typescript-ts-mode
+      tsx-ts-mode
       ruby-ts-mode
       go-ts-mode
       astro-mode
@@ -898,7 +898,7 @@ process."
                '(ruby-ts-mode . ("ruby-lsp" :initializationOptions
                                  (:formatter "standard" :linters ["standard"] :enabledFeatures (:codeActions t :diagnostics t :formatting t)))))
   (add-to-list 'eglot-server-programs
-               '((typescript-ts-mode html-ts-mode json-ts-mode) . esprit/eglot-typescript-contact))
+               '((typescript-ts-mode (tsx-ts-mode :language-id "typescriptreact") html-ts-mode json-ts-mode) . esprit/eglot-typescript-contact))
   (add-to-list 'eglot-server-programs
                '(((rst-mode :language-id "restructuredtext")
                   latex-mode context-mode bibtex-mode org-mode
@@ -1233,9 +1233,10 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (add-hook 'project-find-functions #'project-find-go-module))
 
 (use-package typescript-ts-mode
-  :mode  (rx (: ".ts" (? (in ?x ?m)) eow))
+  :mode  ((rx (: ".ts" (? ?m) eow))
+          ("\\.tsx\\'" . tsx-ts-mode))
   :custom
-  (typescript-indent-level 2)
+  (typescript-ts-mode-indent-offset 2)
   :config
   (unbind-key "M-." typescript-ts-base-mode-map))
 
@@ -1432,8 +1433,12 @@ otherwise create a new window."
 
 (use-package yaml-ts-mode
   :mode (rx (| ".yml" ".yaml") eos)
-  :custom
-  (tab-width 2))
+  :preface
+  (defun esprit/yaml-tab-width ()
+    "Use a tab width of 2 in YAML buffers."
+    (setq-local tab-width 2))
+  :hook
+  (yaml-ts-mode . esprit/yaml-tab-width))
 
 (use-package command-log-mode
   :vc (:url "https://github.com/ludamillion/command-log-mode"))
