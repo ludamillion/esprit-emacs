@@ -1423,7 +1423,8 @@ otherwise create a new window."
     (httpd-start))
   (impatient-mode 1)
   (imp-set-user-filter 'esprit/markdown-filter)
-  (imp-visit-buffer))
+  (browse-url (format "http://localhost:%d/imp/live/%s/"
+                      httpd-port (url-hexify-string (buffer-name)))))
 
 (use-package md-mermaid
   :vc (:url "https://github.com/ahmetus/md-mermaid")
