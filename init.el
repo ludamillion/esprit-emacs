@@ -1419,9 +1419,9 @@ otherwise create a new window."
 (defun esprit/markdown-preview ()
   "Open a live, styled markdown preview."
   (interactive)
-  (unless (process-status "httpd")
+  (unless (get-process "httpd")
     (httpd-start))
-  (impatient-mode)
+  (impatient-mode 1)
   (imp-set-user-filter 'esprit/markdown-filter)
   (imp-visit-buffer))
 
